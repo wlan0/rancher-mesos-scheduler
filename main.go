@@ -4,8 +4,9 @@ import (
 	"os"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/rancherio/rancher-mesos-scheduler/events"
+	"github.com/rancherio/go-machine-service/events"
 	"github.com/rancherio/rancher-mesos-scheduler/handlers"
+	"github.com/rancherio/rancher-mesos-scheduler/scheduler"
 )
 
 var (
@@ -16,17 +17,27 @@ func main() {
 	log.WithFields(log.Fields{
 		"gitcommit": GITCOMMIT,
 	}).Info("Starting rancher-mesos-scheduler...")
+
 	eventHandlers := map[string]events.EventHandler{
-		"physicalhost.create": handlers.MesosSchedule,
-		"ping":                handlers.PingNoOp,
+		"physicalhost.create":    handlers.MesosScheduleCreate,
+		"physicalhost.bootstrap": handlers.MesosScheduleBootstrap,
+		"ping": handlers.PingNoOp,
 	}
 
 	apiUrl := os.Getenv("CATTLE_URL")
 	accessKey := os.Getenv("CATTLE_ACCESS_KEY")
 	secretKey := os.Getenv("CATTLE_SECRET_KEY")
 
+	go func() {
+		err := scheduler.NewScheduler("192.168.11.210:5050")
+		log.WithFields(log.Fields{
+			"err": err,
+		}).Info("Finished Processing. Exiting.")
+		os.Exit(0)
+	}()
+
 	router, err := events.NewEventRouter("rancherMesosScheduler", 2000, apiUrl, accessKey, secretKey,
-		nil, "192.168.11.210:5050", eventHandlers, 10)
+		nil, eventHandlers, 10)
 	if err != nil {
 		log.WithFields(log.Fields{
 			"Err": err,

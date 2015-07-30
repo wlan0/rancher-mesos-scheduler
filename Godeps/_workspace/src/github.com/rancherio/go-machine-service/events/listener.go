@@ -6,9 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 	log "github.com/Sirupsen/logrus"
+	"github.com/rancherio/go-machine-service/locks"
 	"github.com/rancherio/go-rancher/client"
-	"github.com/rancherio/rancher-mesos-scheduler/locks"
-	"github.com/rancherio/rancher-mesos-scheduler/mesos"
 	"net/http"
 	"net/url"
 	"strings"
@@ -18,7 +17,7 @@ import (
 const MaxWait = time.Duration(time.Second * 10)
 
 // Defines the function "interface" that handlers must conform to.
-type EventHandler func(*Event, *client.RancherClient, chan<- *mesos.Task) error
+type EventHandler func(*Event, *client.RancherClient) error
 
 type EventRouter struct {
 	name                string
@@ -28,7 +27,6 @@ type EventRouter struct {
 	secretKey           string
 	apiClient           *client.RancherClient
 	subscribeUrl        string
-	mesosMaster         string
 	eventHandlers       map[string]EventHandler
 	workerCount         int
 	eventStreamResponse *http.Response
@@ -40,7 +38,6 @@ type ProcessConfig struct {
 }
 
 func (router *EventRouter) Start(ready chan<- bool) (err error) {
-	log.Info("starting...")
 	workers := make(chan *Worker, router.workerCount)
 	for i := 0; i < router.workerCount; i++ {
 		w := newWorker()
@@ -103,10 +100,6 @@ func (router *EventRouter) Start(ready chan<- bool) (err error) {
 	router.eventStreamResponse = eventStream
 	defer eventStream.Body.Close()
 
-	taskChan := make(chan *mesos.Task, 1)
-
-	mesos.NewScheduler(router.mesosMaster, taskChan)
-
 	scanner := bufio.NewScanner(eventStream.Body)
 	for scanner.Scan() {
 		line := scanner.Bytes()
@@ -115,9 +108,10 @@ func (router *EventRouter) Start(ready chan<- bool) (err error) {
 		if len(line) == 0 {
 			continue
 		}
+
 		select {
 		case worker := <-workers:
-			go worker.DoWork(line, handlers, router.apiClient, workers, taskChan)
+			go worker.DoWork(line, handlers, router.apiClient, workers)
 		default:
 			log.WithFields(log.Fields{
 				"workerCount": router.workerCount,
@@ -138,7 +132,7 @@ type Worker struct {
 }
 
 func (w *Worker) DoWork(rawEvent []byte, eventHandlers map[string]EventHandler, apiClient *client.RancherClient,
-	workers chan *Worker, taskChan chan *mesos.Task) {
+	workers chan *Worker) {
 	defer func() { workers <- w }()
 
 	event := &Event{}
@@ -166,7 +160,7 @@ func (w *Worker) DoWork(rawEvent []byte, eventHandlers map[string]EventHandler, 
 	defer unlocker.Unlock()
 
 	if fn, ok := eventHandlers[event.Name]; ok {
-		err = fn(event, apiClient, taskChan)
+		err = fn(event, apiClient)
 		if err != nil {
 			log.WithFields(log.Fields{
 				"eventName":  event.Name,
@@ -196,7 +190,7 @@ func (w *Worker) DoWork(rawEvent []byte, eventHandlers map[string]EventHandler, 
 }
 
 func NewEventRouter(name string, priority int, apiUrl string, accessKey string, secretKey string,
-	apiClient *client.RancherClient, mesosMaster string, eventHandlers map[string]EventHandler, workerCount int) (*EventRouter, error) {
+	apiClient *client.RancherClient, eventHandlers map[string]EventHandler, workerCount int) (*EventRouter, error) {
 
 	if apiClient == nil {
 		var err error
@@ -219,7 +213,6 @@ func NewEventRouter(name string, priority int, apiUrl string, accessKey string, 
 		secretKey:     secretKey,
 		apiClient:     apiClient,
 		subscribeUrl:  apiUrl + "/subscribe",
-		mesosMaster:   mesosMaster,
 		eventHandlers: eventHandlers,
 		workerCount:   workerCount,
 	}, nil

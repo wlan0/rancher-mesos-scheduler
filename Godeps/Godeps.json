@@ -22,7 +22,7 @@
 		},
 		{
 			"ImportPath": "github.com/golang/protobuf/proto",
-			"Rev": "f78e6df1618bbffcfc67c1e006a088d834081226"
+			"Rev": "68c687dc49948540b356a6b47931c9be4fcd0245"
 		},
 		{
 			"ImportPath": "github.com/gorilla/websocket",
@@ -55,6 +55,16 @@
 		{
 			"ImportPath": "github.com/mesos/mesos-go/upid",
 			"Rev": "83b52d7f648d2a2fa91330123d348d4090be2aed"
+		},
+		{
+			"ImportPath": "github.com/rancherio/go-machine-service/events",
+			"Comment": "v0.8.0-49-g1f6a673",
+			"Rev": "1f6a67367b9997d674a6bed40f82e52181730831"
+		},
+		{
+			"ImportPath": "github.com/rancherio/go-machine-service/locks",
+			"Comment": "v0.8.0-49-g1f6a673",
+			"Rev": "1f6a67367b9997d674a6bed40f82e52181730831"
 		},
 		{
 			"ImportPath": "github.com/rancherio/go-rancher/client",

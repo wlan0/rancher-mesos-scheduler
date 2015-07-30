@@ -1,13 +1,12 @@
 package handlers
 
 import (
+	"github.com/rancherio/go-machine-service/events"
 	"github.com/rancherio/go-rancher/client"
-	"github.com/rancherio/rancher-mesos-scheduler/events"
-	"github.com/rancherio/rancher-mesos-scheduler/mesos"
 	"time"
 )
 
-func PingNoOp(event *events.Event, apiClient *client.RancherClient, taskChan chan<- *mesos.Task) error {
+func PingNoOp(event *events.Event, apiClient *client.RancherClient) error {
 	// No-op ping handler
 	return nil
 }
