@@ -27,9 +27,11 @@ func main() {
 	apiUrl := os.Getenv("CATTLE_URL")
 	accessKey := os.Getenv("CATTLE_ACCESS_KEY")
 	secretKey := os.Getenv("CATTLE_SECRET_KEY")
+	mesosMaster := os.Getenv("MESOS_MASTER")
+	bridgeCIDR := os.Getenv("IP_CIDR")
 
 	go func() {
-		err := scheduler.NewScheduler("192.168.11.210:5050")
+		err := scheduler.NewScheduler(mesosMaster, bridgeCIDR)
 		log.WithFields(log.Fields{
 			"err": err,
 		}).Info("Finished Processing. Exiting.")

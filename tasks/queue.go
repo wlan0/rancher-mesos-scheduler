@@ -20,7 +20,7 @@ func AddTask(task *Task) {
 	taskQueue[task.Name] = task
 }
 
-func UpdateTask(name, imageRepo, imageTag, registrationUrl, hostUuid string) {
+func UpdateTask(name, imageRepo, imageTag, registrationUrl, hostUuid, hostname string) {
 	mutex.Lock()
 	defer mutex.Unlock()
 	task, ok := taskQueue[name]

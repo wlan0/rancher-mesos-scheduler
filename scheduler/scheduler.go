@@ -11,9 +11,9 @@ import (
 
 const (
 	taskCPUs = 1
-	taskMem  = 1024
+	taskMem  = 300
 	// make this configurable
-	cmd = "rancher-mesos-executor --work_dir=/home/wlan0/Media/hdd"
+	cmd = "rancher-mesos-executor --work_dir=/home"
 )
 
 var (
@@ -105,7 +105,8 @@ func (s *rancherScheduler) Error(_ sched.SchedulerDriver, err string) {
 
 func (s *rancherScheduler) StatusUpdate(driver sched.SchedulerDriver, status *mesos.TaskStatus) {
 	log.WithFields(log.Fields{
-		"status": status,
+		"status": status.State,
+		"task":   status.TaskId,
 	}).Info("Task status update received")
 }
 
@@ -133,12 +134,12 @@ func (s *rancherScheduler) ExecutorLost(_ sched.SchedulerDriver, executorID *mes
 	}).Info("Executor lost")
 }
 
-func NewScheduler(mesosMaster string) error {
+func NewScheduler(mesosMaster, bridgeCIDR string) error {
 	log.Info("Rancher Mesos Scheduler started")
 	scheduler := &rancherScheduler{
 		rancherExecutor: &mesos.ExecutorInfo{
 			Command: &mesos.CommandInfo{
-				Value: proto.String(cmd),
+				Value: proto.String(cmd + " --bridge_cidr=" + bridgeCIDR),
 				Uris:  []*mesos.CommandInfo_URI{},
 			},
 			ExecutorId: &mesos.ExecutorID{Value: proto.String("rancher-mesos-executor")},

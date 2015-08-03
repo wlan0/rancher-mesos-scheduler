@@ -32,7 +32,7 @@ func MesosScheduleBootstrap(event *events.Event, apiClient *client.RancherClient
 		return handleByIdError(err, event, apiClient)
 	}
 
-	tasks.UpdateTask(event.ResourceId, imageRepo, imageTag, regUrl, machine.ExternalId)
+	tasks.UpdateTask(event.ResourceId, imageRepo, imageTag, regUrl, machine.ExternalId, machine.Name)
 
 	reply := newReply(event)
 	return publishReply(reply, apiClient)

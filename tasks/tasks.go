@@ -13,6 +13,7 @@ type Task struct {
 	ImageRepo       string  `json: "image_repo"`
 	ImageTag        string  `json: "image_tag"`
 	HostUuid        string  `json: "host_uuid"`
+	Hostname        string  `json: "hostname"`
 }
 
 func (t *Task) Marshal() ([]byte, error) {
