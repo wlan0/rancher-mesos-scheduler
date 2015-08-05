@@ -11,7 +11,7 @@ import (
 
 const (
 	taskCPUs = 1
-	taskMem  = 300
+	taskMem  = 1024
 	// make this configurable
 	cmd = "rancher-mesos-executor --work_dir=/home"
 )
@@ -66,12 +66,12 @@ func (s *rancherScheduler) ResourceOffers(driver sched.SchedulerDriver, offers [
 	for _, offer := range offers {
 		inadequate := false
 		for _, res := range offer.GetResources() {
-			if res.GetName() == "cpus" && *res.GetScalar().Value < 1 {
+			if res.GetName() == "cpus" && *res.GetScalar().Value < taskCPUs {
 				driver.DeclineOffer(offer.Id, defaultFilter)
 				inadequate = true
 				continue
 			}
-			if res.GetName() == "mem" && *res.GetScalar().Value < 1024 {
+			if res.GetName() == "mem" && *res.GetScalar().Value < taskMem {
 				driver.DeclineOffer(offer.Id, defaultFilter)
 				inadequate = true
 				continue
