@@ -4,9 +4,9 @@ import (
 	"os"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/rancher/rancher-mesos-scheduler/handlers"
+	"github.com/rancher/rancher-mesos-scheduler/scheduler"
 	"github.com/rancherio/go-machine-service/events"
-	"github.com/rancherio/rancher-mesos-scheduler/handlers"
-	"github.com/rancherio/rancher-mesos-scheduler/scheduler"
 )
 
 var (

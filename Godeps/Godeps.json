@@ -1,5 +1,5 @@
 {
-	"ImportPath": "github.com/rancherio/rancher-mesos-scheduler",
+	"ImportPath": "github.com/rancher/rancher-mesos-scheduler",
 	"GoVersion": "go1.4.2",
 	"Deps": [
 		{
@@ -57,14 +57,19 @@
 			"Rev": "83b52d7f648d2a2fa91330123d348d4090be2aed"
 		},
 		{
+			"ImportPath": "github.com/rancher/go-machine-service/events",
+			"Comment": "v0.16.0",
+			"Rev": "f2a152378d1763ad5596004fa2bd3a5390ddcbbc"
+		},
+		{
 			"ImportPath": "github.com/rancherio/go-machine-service/events",
-			"Comment": "v0.8.0-49-g1f6a673",
-			"Rev": "1f6a67367b9997d674a6bed40f82e52181730831"
+			"Comment": "v0.16.0",
+			"Rev": "f2a152378d1763ad5596004fa2bd3a5390ddcbbc"
 		},
 		{
 			"ImportPath": "github.com/rancherio/go-machine-service/locks",
-			"Comment": "v0.8.0-49-g1f6a673",
-			"Rev": "1f6a67367b9997d674a6bed40f82e52181730831"
+			"Comment": "v0.16.0",
+			"Rev": "f2a152378d1763ad5596004fa2bd3a5390ddcbbc"
 		},
 		{
 			"ImportPath": "github.com/rancherio/go-rancher/client",

@@ -2,9 +2,9 @@ package handlers
 
 import (
 	log "github.com/Sirupsen/logrus"
+	"github.com/rancher/rancher-mesos-scheduler/tasks"
 	"github.com/rancherio/go-machine-service/events"
 	"github.com/rancherio/go-rancher/client"
-	"github.com/rancherio/rancher-mesos-scheduler/tasks"
 )
 
 func MesosScheduleCreate(event *events.Event, apiClient *client.RancherClient) (err error) {

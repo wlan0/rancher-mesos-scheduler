@@ -6,7 +6,7 @@ import (
 	mesos "github.com/mesos/mesos-go/mesosproto"
 	"github.com/mesos/mesos-go/mesosutil"
 	sched "github.com/mesos/mesos-go/scheduler"
-	"github.com/rancherio/rancher-mesos-scheduler/tasks"
+	"github.com/rancher/rancher-mesos-scheduler/tasks"
 )
 
 const (
